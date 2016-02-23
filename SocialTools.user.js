@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SocialTools
 // @namespace    https://github.com/FriendlyBaron/SocialTools
-// @version      1.0
+// @version      1.1
 // @description  SocialTools
 // @author       FriendlyBaron
 // @match        http://socialclub.rockstargames.com/crew/*/manage/hierarchy
@@ -17,11 +17,6 @@
 //    tempbans? would need some method for storing. greasemonkey cant write to storage. 
 
 
-//reddit that dude
-//You have been kicked from rGTA Cruises for not actively attending events. If you wish to rejoin our community, feel free to do so at any time. Visit www.reddit.com/r/GTAV_Cruises for more info!
-//.css( "border", "3px solid red" );
-
-
 //The base Jquery to form the dialog comes from here: http://stackoverflow.com/questions/11668111/how-do-i-pop-up-a-custom-form-dialog-in-a-greasemonkey-script
 //--- Use jQuery to add the form in a "popup" dialog.
 $("header").append ( ' \
@@ -35,7 +30,8 @@ $("header").append ( ' \
         <button id="banButton" type="button"><h4>Ban Player</h4></button> \
         <button id="playerPopup" type="button"><h4>Open Player Popup</h4></button> \
         <button id="listByDate" type="button"><h4>List All by Date Joined</h4></button> \
-        <button id="CloseListBtn" style="text-align:center" type="button"><h4>Hide Date List</h4></button> \
+        <button id="listByRank" type="button"><h4>List All by Rank</h4></button> \
+        <button id="CloseListBtn" style="text-align:center" type="button"><h4>Hide Player List</h4></button> \
         <button id="CloseDlgBtn" type="button"><h4>Hide SocialTools</h4></button> \
     </form> \
     </div> \
@@ -44,14 +40,14 @@ $("header").append ( ' \
 //the whole process for doing the kick/ban and message has to be split up function wise to allow for the pages to load. There might be a way to trigger of a callback instead but this works for now.
 function sendMessage(nameStr, messageStr, kickOrBan) {
     
-    $("a[title='Message']").click();
+    $("a[title='Message']").click(); //message button
     setTimeout(writeMessage, 1500, nameStr, messageStr, kickOrBan);
 }
 
 function writeMessage(nameStr, messageStr, kickOrBan) {
     
-    $("textarea[name='newMessageTextarea']").text(messageStr);
-    $("a[id='btnSend']").click();
+    $("textarea[name='newMessageTextarea']").text(messageStr); //set message text
+    $("a[id='btnSend']").click(); //send
     
     if (kickOrBan === "kick")
     {
@@ -112,7 +108,33 @@ function beginKickBan(kickOrBan)
     }
     else
     {
-        $("#infoText").text ("'" + nameStr + "' was not found.");
+        $("#infoText").text ("'" + nameStr + "' was not found (or you don't have permission).");
+    }
+}
+
+function toggleCheckMark(nameStr, state)
+{
+    if (nameStr === "")
+    {
+        $("#infoText").text ("Enter a valid name.");
+        return
+    }
+
+    if ($("label[for='check_" + nameStr + "']").length) //This is nice - You can actually force the click without having to hit 'Next' to search each page individually! We also look for the checkmark here to be sure we actually have permission to kick/ban them.
+    {
+        $("label[for='check_" + nameStr + "']").click() //Checkmate!
+        if (state === "check")
+        {
+            $("#infoText").text ("'" + nameStr + "' has been checkmarked. Use the original SocialClub Kick/Ban/Promote/Demote for this.");
+        }
+        else
+        {
+            $("#infoText").text ("'" + nameStr + "' has been uncheckmarked.");   
+        }
+    }
+    else
+    {
+        $("#infoText").text ("'" + nameStr + "' was not found (or you don't have permission).");
     }
 }
 
@@ -168,14 +190,95 @@ $("#listByDate").click ( function () {
     
     for (var i = 0; i < players.length; i++)
 	{
-        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center">' + players[i].name + ' - ' + (players[i].val.getMonth()+1) + ' ' + players[i].val.getDate() + ' ' + players[i].val.getFullYear() + ' ' +'</h5>');
+        //name, date, and input for the checkbox. Each checkbox is linked to the player for tracking purposes.
+        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + players[i].name + '" type="checkbox" value="' + players[i].name + '">' + players[i].name + ' - ' + (players[i].val.getMonth()+1) + ' ' + players[i].val.getDate() + ' ' + players[i].val.getFullYear() + ' ' +'</h5>');
 	}
     $("header").append ( '</div>');
-    $("#infoText").text ("List generated.");
+    $("#infoText").text ("Date List generated.");
+    
+    $("[id^=listBox]").click ( function () {  //This looks for any element starting with listBox, so listBoxUserA and listBox420yoloswagxXx are both hit.
+        if ( this.checked ) {   
+            toggleCheckMark(this.value, "check");
+        } else {
+            toggleCheckMark(this.value, "unchecked");
+        }
+    });
+} );
+
+
+
+$("#listByRank").click ( function () {   
+    var rank1 = new Array();
+    var rank2 = new Array();
+    var rank3 = new Array();
+    var rank4 = new Array();
+    $("#crewRankWrapper_1 a[class='player-card-actions']").each(function() {
+        rank1.push({name: $(this).attr("data-nickname"), val: new Date($(this).parent().next().html().replace('Joined: ',''))});
+    });
+    $("#crewRankWrapper_2 a[class='player-card-actions']").each(function() {
+        rank2.push({name: $(this).attr("data-nickname"), val: new Date($(this).parent().next().html().replace('Joined: ',''))});
+    });
+    $("#crewRankWrapper_3 a[class='player-card-actions']").each(function() {
+        rank3.push({name: $(this).attr("data-nickname"), val: new Date($(this).parent().next().html().replace('Joined: ',''))});
+    });
+    $("#crewRankWrapper_4 a[class='player-card-actions']").each(function() {
+        rank4.push({name: $(this).attr("data-nickname"), val: new Date($(this).parent().next().html().replace('Joined: ',''))});
+    });
+    
+    //Skip sorting to keep alhpabetical
+    
+    $("header").append ( '<div id="PlayerList" style="text-align:center"> ');
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 1 <input id="selectAll" type="checkbox" value="Rank 1"></h1><br/ id="playerDate">'); //Rank 1 + the checkmark for selecting all
+    for (var i = 0; i < rank1.length; i++)
+	{
+        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank1[i].name + '" type="checkbox" value="' + rank1[i].name + '">' + rank1[i].name + '</h5>'); //player name + checkbox
+	}
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 2 <input id="selectAll" type="checkbox" value="Rank 2"></h1><br/ id="playerDate">');
+    for (var i = 0; i < rank2.length; i++)
+	{
+        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank2[i].name + '" type="checkbox" value="' + rank2[i].name + '">' + rank2[i].name + '</h5>');
+	}
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 3 <input id="selectAll" type="checkbox" value="Rank 3"></h1><br/ id="playerDate">');
+    for (var i = 0; i < rank3.length; i++)
+	{
+        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank3[i].name + '" type="checkbox" value="' + rank3[i].name + '">' + rank3[i].name + '</h5>');
+	}
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 4 <input id="selectAll" type="checkbox" value="Rank 4"></h1><br/ id="playerDate">');
+    for (var i = 0; i < rank4.length; i++)
+	{
+        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank4[i].name + '" type="checkbox" value="' + rank4[i].name + '">' + rank4[i].name + '</h5>');
+	}
+    $("header").append ( '</div>');
+    $("#infoText").text ("Rank List generated.");
+    
+    $("[id^=listBox]").click ( function () {  //indivudual player checkboxes again
+        if ( this.checked ) {   
+            toggleCheckMark(this.value, "check");
+        } else {
+            toggleCheckMark(this.value, "unchecked");
+        }
+    });
+    
+    $("[id^=selectAll]").click ( function () {  //the checkboxes for selecting all players in a rank
+       
+       var rankToUse = this.value.replace('Rank ',''); //convert the value to just the number
+        
+        if ( this.checked ) {   
+            $("#crewRankWrapper_"+rankToUse+" a[class='player-card-actions']").each(function() { //go through each player and checkem
+                toggleCheckMark($(this).attr("data-nickname"), "check");
+            });
+            $("#infoText").text ("All of " + this.value + " has been checkmarked. Use the normal SocialClub Kick/Ban/Promote/Demote options.");
+        } else {
+            $("#crewRankWrapper_"+rankToUse+" a[class='player-card-actions']").each(function() {
+                toggleCheckMark($(this).attr("data-nickname"), "unchecked");
+            });
+            $("#infoText").text ("All of " + this.value + " has been unchecked.");
+        }
+    });
     
 } );
     
 $("#CloseListBtn").click ( function () {
-    $("*#playerDate").remove(); //remove every h5 listing the dates.
+    $("*#playerDate").remove(); //This ends up removing every listing (*) related to either list based off playerDate being in the ID for each.
     $("#infoText").text ("List hidden.");
 } );
