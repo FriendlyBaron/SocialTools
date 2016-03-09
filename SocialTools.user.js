@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         SocialTools
 // @namespace    https://github.com/FriendlyBaron/SocialTools
-// @version      1.1
+// @version      1.2
 // @description  SocialTools
 // @author       FriendlyBaron
 // @match        http://socialclub.rockstargames.com/crew/*/manage/hierarchy
+// @match        http://socialclub.rockstargames.com/friends/index
 // @grant        none
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
@@ -19,6 +20,20 @@
 
 //The base Jquery to form the dialog comes from here: http://stackoverflow.com/questions/11668111/how-do-i-pop-up-a-custom-form-dialog-in-a-greasemonkey-script
 //--- Use jQuery to add the form in a "popup" dialog.
+
+if (window.location.href == "http://socialclub.rockstargames.com/friends/index") //If there is a better way to do this, let me know...
+{
+    $("header").append ( ' \
+    <div id="PopupContainer" style="text-align:center"> \
+    <hr/> \
+    <form> <!-- For true form use method="POST" action="YOUR_DESIRED_URL" --> \
+        <button id="showRemover" type="button"><h4>Show Delete Friend</h4></button> <!--not gonna worry about hiding these buttons, the page can just be refreshed--> \
+    </form> \
+    </div> \
+    ' );
+}
+else
+{
 $("header").append ( ' \
     <div id="PopupContainer" style="text-align:center"> \
     <hr/> \
@@ -36,12 +51,32 @@ $("header").append ( ' \
     </form> \
     </div> \
 ' );
+}
+
 
 //the whole process for doing the kick/ban and message has to be split up function wise to allow for the pages to load. There might be a way to trigger of a callback instead but this works for now.
 function sendMessage(nameStr, messageStr, kickOrBan) {
     
     $("a[title='Message']").click(); //message button
     setTimeout(writeMessage, 1500, nameStr, messageStr, kickOrBan);
+}
+
+function unfriendMore() {
+    
+    $("a[title='More Options']").click();
+    setTimeout(unfriendUnfriend, 500);
+}
+
+function unfriendUnfriend() {
+    
+    $("a[title='Unfriend']").click();
+    setTimeout(unfriendConfirm, 1000);
+}
+
+function unfriendConfirm()
+{
+   $("a:contains('confirm')").click(); 
+   $("div[class='modal-backdrop fade in']").remove(); //The black backgrounds would stay like this: http://i.imgur.com/9Ksroda.png
 }
 
 function writeMessage(nameStr, messageStr, kickOrBan) {
@@ -149,6 +184,27 @@ $("#CloseDlgBtn").click ( function () {
 
 $("#banButton").click ( function () {
     beginKickBan("ban");  
+} );
+
+function addDeleteButtons(){
+
+    $("i[class='scicon-menu-dots player-card-actions']").each(function() {
+        
+        if ($(this).parent().find(".removeFriendClass").length < 1) //dont do anything if the player card already has the Delete Friend button
+        {
+            $(this).parent().append('<br/><br/><button id="removeFriend'+$(this).attr("data-nickname")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>');
+
+            $("[id=removeFriend"+$(this).attr("data-nickname")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
+
+                $(this).parent().children().first().next().next().click();
+                setTimeout(unfriendMore, 1000);
+            });
+        }
+    });
+}
+
+$("#showRemover").click ( function () {   
+    setInterval(addDeleteButtons, 250); //On the friends page, not all of the player cards load right away, so we'll just
 } );
 
 $("#playerPopup").click ( function () {
