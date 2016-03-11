@@ -44,7 +44,7 @@ $("header").append ( ' \
         <button id="kickButton" type="button"><h4>Kick Player</h4></button> \
         <button id="banButton" type="button"><h4>Ban Player</h4></button> \
         <button id="playerPopup" type="button"><h4>Open Player Popup</h4></button> \
-        <button id="listByDate" type="button"><h4>List All by Date Joined</h4></button> \
+        <button id="listByActive" type="button"><h4>List All with Different Active Crew</h4></button> \
         <button id="listByRank" type="button"><h4>List All by Rank</h4></button> \
         <button id="CloseListBtn" style="text-align:center" type="button"><h4>Hide Player List</h4></button> \
         <button id="CloseDlgBtn" type="button"><h4>Hide SocialTools</h4></button> \
@@ -190,9 +190,9 @@ function addDeleteButtons(){
 
     $("i[class='scicon-menu-dots player-card-actions']").each(function() {
         
-        if ($(this).parent().find(".removeFriendClass").length < 1) //dont do anything if the player card already has the Delete Friend button
+        if ($(this).find(".removeFriendClass").length < 1) //dont do anything if the player card already has the Delete Friend button
         {
-            $(this).parent().append('<br/><br/><button id="removeFriend'+$(this).attr("data-nickname")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>');
+            $(this).append('<br/><button id="removeFriend'+$(this).attr("data-nickname")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>');
 
             $("[id=removeFriend"+$(this).attr("data-nickname")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
 
@@ -227,30 +227,25 @@ $("#playerPopup").click ( function () {
     
 } );
 
-$("#listByDate").click ( function () {   
+$("#listByActive").click ( function () {   
     var players = new Array();
     $("a[class='player-card-actions']").each(function() {
-        players.push({name: $(this).attr("data-nickname"), val: new Date($(this).parent().next().html().replace('Joined: ',''))}); //make an object to keep the name+date linked and sortable. we get the players name and then follow the CSS up to the parent h3, then to the sibling p below, get the html text, remove the Joined text.
+        players.push({name: $(this).attr("data-nickname"), val: $(this).parent().next().children().children().first().html()}); //make an object to keep the name+crew linked and sortable.
+        
     });
     
-    //lazily taken from https://onpub.com/how-to-sort-an-array-of-dates-with-javascript-s7-a109
-    var date_sort_asc = function (date1, date2) {
-        if (date1.val > date2.val) return 1;
-        if (date1.val < date2.val) return -1;
-        return 0;
-    };
-    
-    players.sort(date_sort_asc);
-    
+    var crewName =  $("#hierarchyFilterWrapper div[class='crewTag private']").children().first().html();
     $("header").append ( '<div id="PlayerList" style="text-align:center"> ');
     
     for (var i = 0; i < players.length; i++)
 	{
-        //name, date, and input for the checkbox. Each checkbox is linked to the player for tracking purposes.
-        $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + players[i].name + '" type="checkbox" value="' + players[i].name + '">' + players[i].name + ' - ' + (players[i].val.getMonth()+1) + ' ' + players[i].val.getDate() + ' ' + players[i].val.getFullYear() + ' ' +'</h5>');
-	}
+        //name, active crew, and input for the checkbox. Each checkbox is linked to the player for tracking purposes.
+        if (crewName != players[i].val)
+        {
+            $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + players[i].name + '" type="checkbox" value="' + players[i].name + '">' + players[i].name + ' - ' + players[i].val +'</h5>');
+        }
+    }
     $("header").append ( '</div>');
-    $("#infoText").text ("Date List generated.");
     
     $("[id^=listBox]").click ( function () {  //This looks for any element starting with listBox, so listBoxUserA and listBox420yoloswagxXx are both hit.
         if ( this.checked ) {   
