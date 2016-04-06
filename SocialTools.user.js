@@ -4,6 +4,7 @@
 // @version      1.2
 // @description  SocialTools
 // @author       FriendlyBaron
+// @match        https://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/friends/index
 // @grant        none
@@ -43,6 +44,7 @@ $("header").append ( ' \
         <h3 style="color:white" id="infoText">&nbsp;</h3> \
         <button id="kickButton" type="button"><h4>Kick Player</h4></button> \
         <button id="banButton" type="button"><h4>Ban Player</h4></button> \
+        <button id="messageAll" type="button"><h4>Message All Checked</h4></button> \
         <button id="playerPopup" type="button"><h4>Open Player Popup</h4></button> \
         <button id="listByActive" type="button"><h4>List All with Different Active Crew</h4></button> \
         <button id="listByRank" type="button"><h4>List All by Rank</h4></button> \
@@ -76,7 +78,12 @@ function unfriendUnfriend() {
 function unfriendConfirm()
 {
    $("a:contains('confirm')").click(); 
-   $("div[class='modal-backdrop fade in']").remove(); //The black backgrounds would stay like this: http://i.imgur.com/9Ksroda.png
+   setTimeout(wipeBlack, 1000);
+}
+
+function wipeBlack()
+{
+    $("div[class='modal-backdrop fade in']").remove(); //The black backgrounds would stay like this: http://i.imgur.com/9Ksroda.png
 }
 
 function writeMessage(nameStr, messageStr, kickOrBan) {
@@ -114,7 +121,7 @@ function performBan(nameStr) {
 function confirmAction()
 {
    $("a:contains('yes')").click(); 
-   $("div[class='modal-backdrop fade in']").remove(); //The black backgrounds would stay like this: http://i.imgur.com/9Ksroda.png
+   setTimeout(wipeBlack, 1000);
 }
 
 function beginKickBan(kickOrBan)
@@ -185,6 +192,49 @@ $("#CloseDlgBtn").click ( function () {
 $("#banButton").click ( function () {
     beginKickBan("ban");  
 } );
+
+$("#messageAll").click ( function () {
+    var players = new Array();
+    $("div[title='Unselect']").each(function() {
+        players.push($(this).next());
+    });
+    messageFromListClickDots(players);
+} );
+
+function messageFromListClickDots(players) {
+    
+    if (players.length < 1)
+    {
+        $("#infoText").text ("Done with mass messaging.");
+        return
+    }
+    
+    var messageStr = document.getElementById("message").value;
+    if (!(messageStr === "Optional Message") && !(messageStr === ""))
+    {   
+        players[0].click();
+        setTimeout(messageFromListClickMessage, 5000, players); 
+    }
+    else
+    {
+        $("#infoText").text ("Enter a message.");
+        return
+    }
+}
+
+function messageFromListClickMessage(players) {
+    
+    $("a[title='Message']").click(); //message button
+    setTimeout(messageFromListWriteMessage, 5000, players);
+}
+
+function messageFromListWriteMessage(players) {
+    
+    $("textarea[name='newMessageTextarea']").text(document.getElementById("message").value); //set message text
+    $("a[id='btnSend']").click(); //send
+    players.shift()
+    setTimeout(messageFromListClickDots, 5000, players);  
+}
 
 function addDeleteButtons(){
 
