@@ -7,6 +7,7 @@
 // @match        https://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/friends/index
+// @match        https://socialclub.rockstargames.com/friends/index
 // @grant        none
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
@@ -22,7 +23,7 @@
 //The base Jquery to form the dialog comes from here: http://stackoverflow.com/questions/11668111/how-do-i-pop-up-a-custom-form-dialog-in-a-greasemonkey-script
 //--- Use jQuery to add the form in a "popup" dialog.
 
-if (window.location.href == "http://socialclub.rockstargames.com/friends/index") //If there is a better way to do this, let me know...
+if (window.location.href == "http://socialclub.rockstargames.com/friends/index" || window.location.href == "https://socialclub.rockstargames.com/friends/index") //If there is a better way to do this, let me know...
 {
     $("header").append ( ' \
     <div id="PopupContainer" style="text-align:center"> \
