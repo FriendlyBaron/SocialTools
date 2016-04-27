@@ -8,6 +8,8 @@
 // @match        http://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/friends/index
 // @match        https://socialclub.rockstargames.com/friends/index
+// @match        https://socialclub.rockstargames.com/member/*
+// @match        http://socialclub.rockstargames.com/member/*
 // @grant        none
 // @require     http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js
 // ==/UserScript==
@@ -19,7 +21,6 @@
 //    unban
 //    tempbans? would need some method for storing. greasemonkey cant write to storage. 
 
-
 //The base Jquery to form the dialog comes from here: http://stackoverflow.com/questions/11668111/how-do-i-pop-up-a-custom-form-dialog-in-a-greasemonkey-script
 //--- Use jQuery to add the form in a "popup" dialog.
 
@@ -30,9 +31,15 @@ if (window.location.href == "http://socialclub.rockstargames.com/friends/index" 
     <hr/> \
     <form> <!-- For true form use method="POST" action="YOUR_DESIRED_URL" --> \
         <button id="showRemover" type="button"><h4>Show Delete Friend</h4></button> <!--not gonna worry about hiding these buttons, the page can just be refreshed--> \
+        <button id="removeAllChecked" type="button"><h4>Remove All Checked</h4></button> \
+        <h3 style="color:white" id="infoText">&nbsp;</h3> \
     </form> \
     </div> \
     ' );
+}
+else if (window.location.href.startsWith("https://socialclub.rockstargames.com/member") || window.location.href.startsWith("http://socialclub.rockstargames.com/member"))
+{
+    setTimeout(showDeleteFriendOption, 1250);
 }
 else
 {
@@ -85,6 +92,23 @@ function unfriendConfirm()
 function wipeBlack()
 {
     $("div[class='modal-backdrop fade in']").remove(); //The black backgrounds would stay like this: http://i.imgur.com/9Ksroda.png
+}
+
+function showDeleteFriendOption() {
+    $("li[id='btnDeleteFriend'").append ( ' \
+            <button id="removeFriendNormal" type="button">One Click Delete Friend</button> \
+    ' );
+    $("div[class='split-button end btnDeleteFriend'").append ( ' \
+            <button id="removeFriendHiddenProfile" type="button">One Click Delete Friend</button> \
+    ' );
+    $("#removeFriendNormal").click ( function () {
+        $("li[id='btnDeleteFriend']").click();
+        setTimeout(confirmRemoveFriend, 750);
+    } );
+    $("#removeFriendHiddenProfile").click ( function () {
+        $("div[class='split-button end btnDeleteFriend'").click();
+        setTimeout(confirmRemoveFriend, 750);
+    } );
 }
 
 function writeMessage(nameStr, messageStr, kickOrBan) {
@@ -202,6 +226,61 @@ $("#messageAll").click ( function () {
     messageFromListClickDots(players);
 } );
 
+$("#removeAllChecked").click ( function () {
+    var checkmarkList = new Array();
+    $("[id^=friendBox]").each(function() {
+        if($(this).is(':checked'))
+        {
+            checkmarkList.push($(this).val());
+        }
+    });
+    removeListOfFriends(checkmarkList);
+} );
+
+function confirmRemoveFriend() {
+    $("a[id='btnConfirm']").click();
+}
+
+function removeListOfFriends(checkmarkList) {
+    if (checkmarkList.length < 1)
+    {
+        $("#infoText").text ("Finished with Friend Removal.");
+        return;
+    }
+    else
+    {
+        $("#infoText").text (checkmarkList.length + " left to remove.");
+    }
+    if ($("[i[data-nickname='" + checkmarkList[0] + "']").length ) {
+        $("[i[data-nickname='" + checkmarkList[0] + "']").click();
+        setTimeout(removeListOfFriendsMore, 2000, checkmarkList);
+    }
+    else
+    {
+        $('html, body').animate({ scrollTop: $(document).height() }, 250);
+        setTimeout(removeListOfFriends, 500, checkmarkList);
+    }
+}
+
+function removeListOfFriendsMore(checkmarkList) {
+
+    $("a[title='More Options']").click();
+    setTimeout(removeListOfFriendsDeleteBtn, 2000, checkmarkList);
+}
+
+function removeListOfFriendsDeleteBtn(checkmarkList) {
+
+    $("a[title='Unfriend']").click();
+    setTimeout(removeListOfFriendsConfirm, 2000, checkmarkList);
+}
+
+function removeListOfFriendsConfirm(checkmarkList) {
+
+    $("a[id='btnConfirm']").click();
+    checkmarkList.shift();
+    setTimeout(removeListOfFriends, 3000, checkmarkList);
+}
+
 function messageFromListClickDots(players) {
 
     if (players.length < 1)
@@ -247,7 +326,9 @@ function addDeleteButtons(){
 
         if ($(this).find(".removeFriendClass").length < 1) //dont do anything if the player card already has the Delete Friend button
         {
-            $(this).append('<br/><button id="removeFriend'+$(this).attr("data-nickname")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>');
+            $(this).append('<br/><button id="removeFriend'+$(this).attr("data-nickname")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>    ');
+
+            $(this).parent().children().first().next().children().first().next().after('<input id="friendBox' + $(this).attr("data-nickname") + '" type="checkbox" value="' + $(this).attr("data-nickname") + '">');
 
             $("[id=removeFriend"+$(this).attr("data-nickname")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
 
@@ -259,7 +340,7 @@ function addDeleteButtons(){
 }
 
 $("#showRemover").click ( function () {
-    setInterval(addDeleteButtons, 250); //On the friends page, not all of the player cards load right away, so we'll just
+    setInterval(addDeleteButtons, 250);
 } );
 
 $("#playerPopup").click ( function () {

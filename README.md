@@ -5,6 +5,8 @@ View info/use on reddit: https://www.reddit.com/r/GrandTheftAutoV/comments/479o5
 
 https://www.reddit.com/r/gtaonline/comments/49uz5h/socialtools_a_browser_script_for_enhancements_to/
 
+Disucssion on NODO forums - http://nodo.freeforums.net/thread/6801/socialtools-extension-social-club-website
+
 ____________________________________________________________________
 
 Managing players in a crew can be hard. Clicking through multiple pages on Rockstar's Social Club page to find them for kicks, bans, promotions or demotions takes an annoyingly long time. **SocialTools** aims to simplify this process for crews both large and small.
@@ -17,7 +19,7 @@ Features:
 * Open the [player options page](http://i.imgur.com/vUg5XY4.png) by name.
 * List all players by [Different Active Crew](http://i.imgur.com/Fi7JrOz.png) or by [Rank+Alphabetical](http://i.imgur.com/kTG9GTr.png). You can checkmark players from this list as well (makes for easy Control-F/Find of a player).
 * Quickly select all players in a rank at once.
-* Quickly remove friends with the press of a [single button](http://i.imgur.com/OgkWgyT.png).
+* Quickly remove friends with the press of a [single button](http://i.imgur.com/WzBAQVj.png).
 * Send a mass message to multiple people in the crew
 
 Install:
@@ -36,6 +38,8 @@ Usage:
 * *Hide SocialTools* will hide the secondary buttons from your the page until the page is reloaded.
 * The *Message All Checked* Button will send the message entered in the 'Optional Message' Area to everyone who has been checkmarked. It takes around 15 seconds per message, but you can message as many people as you want at once.
 * On your Friend's page, the *Show Delete Friend* button will add a *Delete Friend* button onto each player card. This button will instantly remove them as a friend. The *Show Delete Friend* button is a safety tool, as the *Delete Friend* button automatically confirms the deletion.
+* Also on the Friend page, you can checkmark multiple people - http://i.imgur.com/WzBAQVj.png - and then all of them will be removed at once by clicking *Remove All Checked*
+* Individual profile pages will show a remove friend button, even if private. http://i.imgur.com/YXZHFNw.png and http://i.imgur.com/kRE9Rpn.png
 
 Security:
 
