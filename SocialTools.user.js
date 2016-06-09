@@ -19,7 +19,7 @@
 
 //todos?
 //    unban
-//    tempbans? would need some method for storing. greasemonkey cant write to storage. 
+//    tempbans? would need some method for storing. greasemonkey cant write to storage.
 
 //The base Jquery to form the dialog comes from here: http://stackoverflow.com/questions/11668111/how-do-i-pop-up-a-custom-form-dialog-in-a-greasemonkey-script
 //--- Use jQuery to add the form in a "popup" dialog.
@@ -30,8 +30,9 @@ if (window.location.href == "http://socialclub.rockstargames.com/friends/index" 
     <div id="PopupContainer" style="text-align:center"> \
     <hr/> \
     <form> <!-- For true form use method="POST" action="YOUR_DESIRED_URL" --> \
-        <button id="showRemover" type="button"><h4>Show Delete Friend</h4></button> <!--not gonna worry about hiding these buttons, the page can just be refreshed--> \
+        <button id="showRemover" type="button"><h4>Show One-Click Delete Friend</h4></button> <!--not gonna worry about hiding these buttons, the page can just be refreshed--> \
         <button id="removeAllChecked" type="button"><h4>Remove All Checked</h4></button> \
+        <button id="denyAll" type="button"><h4>Deny All Friend Requests</h4></button> \
         <h3 style="color:white" id="infoText">&nbsp;</h3> \
     </form> \
     </div> \
@@ -62,7 +63,6 @@ $("header").append ( ' \
     </div> \
 ' );
 }
-
 
 //the whole process for doing the kick/ban and message has to be split up function wise to allow for the pages to load. There might be a way to trigger of a callback instead but this works for now.
 function sendMessage(nameStr, messageStr, kickOrBan) {
@@ -237,8 +237,38 @@ $("#removeAllChecked").click ( function () {
     removeListOfFriends(checkmarkList);
 } );
 
+$("#denyAll").click ( function () {
+    var denyList = new Array();
+    $("div[class='scicon-menu-dots player-card-actions']").each(function() {
+        denyList.push($(this).attr("data-nickname"));
+    });
+    denyRequests(denyList);
+} );
+
+
 function confirmRemoveFriend() {
     $("a[id='btnConfirm']").click();
+}
+
+function denyRequests(denyList) {
+    if (denyList.length < 1)
+    {
+        $("#infoText").text ("Finished with Request Denial.");
+        return;
+    }
+    else
+    {
+        $("#infoText").text (denyList.length + " left to deny.");
+    }
+    $("[div[data-nickname='" + denyList[0] + "']").click();
+    setTimeout(denyRequestReject, 4000, denyList);
+}
+
+function denyRequestReject(denyList) {
+
+    $("a[class='btnRejectFriend rejectRequest']").click();
+    denyList.shift();
+    setTimeout(denyRequests, 11500, denyList);
 }
 
 function removeListOfFriends(checkmarkList) {
@@ -278,7 +308,7 @@ function removeListOfFriendsConfirm(checkmarkList) {
 
     $("a[id='btnConfirm']").click();
     checkmarkList.shift();
-    setTimeout(removeListOfFriends, 3000, checkmarkList);
+    setTimeout(removeListOfFriends, 11000, checkmarkList);
 }
 
 function messageFromListClickDots(players) {
@@ -315,7 +345,12 @@ function messageFromListClickMessage(players) {
 function messageFromListWriteMessage(players) {
 
     $("textarea[name='newMessageTextarea']").text(document.getElementById("message").value); //set message text
-    $("a[id='btnSend']").click(); //send
+    setTimeout(messageFromListClickSendMessage, 500, players);
+}
+
+function messageFromListClickSendMessage(players) {
+
+    $("button[id='btnSend']").click(); //send
     players.shift();
     setTimeout(messageFromListClickDots, 5000, players);
 }
@@ -337,6 +372,26 @@ function addDeleteButtons(){
             });
         }
     });
+    $("div[class='scicon-menu-dots player-card-actions']").each(function() {
+        if ($(this).find(".denyFriendClass").length < 1) //dont do anything if the player card already has the Deny Friend button
+        {
+            $(this).append('<br/><button id="denyFriend'+$(this).attr("data-nickname")+'" type="button" class="denyFriendClass"><h6>Deny Friend</h6></button>    ');
+
+            $(this).parent().children().first().next().children().first().next().after('<input id="denyBox' + $(this).attr("data-nickname") + '" type="checkbox" value="' + $(this).attr("data-nickname") + '">');
+
+            $("[id=denyFriend"+$(this).attr("data-nickname")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
+
+                //$(this).parent().children().first().next().css( "border", "3px solid red" );
+                //$(this).parent().children().first().next().next().click();
+                setTimeout(denyReject, 1000);
+            });
+        }
+    });
+}
+
+function denyReject() {
+
+    $("a[class='btnRejectFriend rejectRequest']").click();
 }
 
 $("#showRemover").click ( function () {
