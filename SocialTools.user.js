@@ -62,6 +62,27 @@ $("header").append ( ' \
     </form> \
     </div> \
 ' );
+    setTimeout(setQueryPlayer, 3000);
+}
+
+function setQueryPlayer()
+{
+    var name = localStorage.getItem("queryPlayer");
+    if (name !== null && name.length > 0)
+    {
+        $("input[id='nickname']").val(name);
+        $("a[id='searchHierarchy']").click();
+        setTimeout(checkQueryPlayer, 1100, name);
+        localStorage.setItem("queryPlayer","");
+    }
+}
+
+function checkQueryPlayer(name)
+{
+    if ($("label[for='check_" + name + "']").length)
+    {
+        $("label[for='check_" + name + "']").click();
+    }
 }
 
 //the whole process for doing the kick/ban and message has to be split up function wise to allow for the pages to load. There might be a way to trigger of a callback instead but this works for now.
@@ -109,6 +130,30 @@ function showDeleteFriendOption() {
         $("div[class='split-button end btnDeleteFriend'").click();
         setTimeout(confirmRemoveFriend, 750);
     } );
+
+    setTimeout(showPromoteOption, 500);
+}
+
+function showPromoteOption() {
+    $("div[class='crewCard featureCard lightCard']").each(function() {
+        if ($(this).find(".promoteClass").length < 1)
+        {
+            $(this).children().first().children().first().next().children().first().next().next().children().first().after('<br/><button id="promote'+$(this).attr("data-nickname")+'" type="button" class="promoteClass"><h6>Manage in this Crew</h6></button>    ');
+
+            $("[id=promote"+$(this).attr("data-nickname")+"]").click ( function () {
+                var playerName = $("div[class='user-data']").children().first().text();
+                var crewTag = $(this).parent().children().first().attr("href");
+                localStorage.setItem("queryPlayer", playerName);
+                var newWindow = window.open("https://socialclub.rockstargames.com"+crewTag+"/manage/hierarchy");
+            });
+        }
+    });
+}
+
+function setNameWindow(newWindow) {
+    newWindow.document.getElementById("infoText").css( "border", "3px solid red" );
+    newWindow.document.write("<p>This is 'myWindow'</p>");
+    newWindow.document.getElementById("infoText").value="test";
 }
 
 function writeMessage(nameStr, messageStr, kickOrBan) {

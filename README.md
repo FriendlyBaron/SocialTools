@@ -21,6 +21,9 @@ Features:
 * Quickly select all players in a rank at once.
 * Quickly remove friends with the press of a [single button](http://i.imgur.com/WzBAQVj.png).
 * Send a mass message to multiple people in the crew
+* Manage people in the crew from their profile page - http://i.imgur.com/gWSgqBP.png
+* Quickly Reject One or All Friend Requests
+
 
 Install:
 
@@ -39,7 +42,9 @@ Usage:
 * The *Message All Checked* Button will send the message entered in the 'Optional Message' Area to everyone who has been checkmarked. It takes around 15 seconds per message, but you can message as many people as you want at once.
 * On your Friend's page, the *Show Delete Friend* button will add a *Delete Friend* button onto each player card. This button will instantly remove them as a friend. The *Show Delete Friend* button is a safety tool, as the *Delete Friend* button automatically confirms the deletion.
 * Also on the Friend page, you can checkmark multiple people - http://i.imgur.com/WzBAQVj.png - and then all of them will be removed at once by clicking *Remove All Checked*
+* You can also deny a single or deny all friend requests at once.
 * Individual profile pages will show a remove friend button, even if private. http://i.imgur.com/YXZHFNw.png and http://i.imgur.com/kRE9Rpn.png
+* Also on individual profile pages, you have the option to 'Manage for this crew' - Basically, pick the crew you want to manage them in (and have permission to), and it will load that crew's manage page and search for the player automatically.
 
 Security:
 
@@ -48,7 +53,7 @@ Security:
 
 Planned/Bugs/Ideas
 
-* I have considered doing something for temporary bans, but there's no simple way to save a countdown if you close the page.
+* The tool does not work if your Social Club is not in English.
 * Report any bugs and I'll fix them ASAP
 * Open to ideas for additions, even if it's a specific thing I can make a one-off version for you or at least give you the pseudocode for it.
 
