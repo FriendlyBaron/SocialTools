@@ -131,16 +131,17 @@ function showDeleteFriendOption() {
         setTimeout(confirmRemoveFriend, 750);
     } );
 
-    setTimeout(showPromoteOption, 500);
+    setTimeout(showManageOption, 500);
 }
 
-function showPromoteOption() {
+function showManageOption() {
     $("div[class='crewCard featureCard lightCard']").each(function() {
         if ($(this).find(".promoteClass").length < 1)
         {
-            $(this).children().first().children().first().next().children().first().next().next().children().first().after('<br/><button id="promote'+$(this).attr("data-nickname")+'" type="button" class="promoteClass"><h6>Manage in this Crew</h6></button>    ');
+            var crewID = $(this).children().first().children().first().attr("data-id");
+            $(this).children().first().children().first().next().children().first().next().next().children().first().after('<br/><button id="promote'+crewID+'" type="button" class="promoteClass"><h6>Manage in this Crew</h6></button>    ');
 
-            $("[id=promote"+$(this).attr("data-nickname")+"]").click ( function () {
+            $("[id=promote"+crewID+"]").click ( function () {
                 var playerName = $("div[class='user-data']").children().first().text();
                 var crewTag = $(this).parent().children().first().attr("href");
                 localStorage.setItem("queryPlayer", playerName);
