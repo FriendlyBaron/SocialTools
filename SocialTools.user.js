@@ -71,17 +71,32 @@ function setQueryPlayer()
     if (name !== null && name.length > 0)
     {
         $("input[id='nickname']").val(name);
-        $("a[id='searchHierarchy']").click();
-        setTimeout(checkQueryPlayer, 1100, name);
-        localStorage.setItem("queryPlayer","");
+        if ($("input[id='nickname']").val() == name)
+        {
+            setTimeout(checkQueryPlayer, 1100, name);
+            localStorage.setItem("queryPlayer","");
+        }
+        else
+        {
+            setTimeout(setQueryPlayer, 1000);
+        }
     }
 }
 
 function checkQueryPlayer(name)
 {
+    $("a[id='searchHierarchy']").click();
     if ($("label[for='check_" + name + "']").length)
     {
-        $("label[for='check_" + name + "']").click();
+        if ($("label[for='check_" + name + "']").parent().attr("title") == "Unselect")
+        {
+            setTimeout(checkQueryPlayer, 1000, name);
+        }
+        else
+        {
+            $("label[for='check_" + name + "']").click();
+            setTimeout(checkQueryPlayer, 1000, name);
+        }
     }
 }
 
@@ -149,12 +164,6 @@ function showManageOption() {
             });
         }
     });
-}
-
-function setNameWindow(newWindow) {
-    newWindow.document.getElementById("infoText").css( "border", "3px solid red" );
-    newWindow.document.write("<p>This is 'myWindow'</p>");
-    newWindow.document.getElementById("infoText").value="test";
 }
 
 function writeMessage(nameStr, messageStr, kickOrBan) {
