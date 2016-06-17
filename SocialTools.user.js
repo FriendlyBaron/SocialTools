@@ -30,6 +30,8 @@ if (window.location.href == "http://socialclub.rockstargames.com/friends/index" 
     <div id="PopupContainer" style="text-align:center"> \
     <hr/> \
     <form> <!-- For true form use method="POST" action="YOUR_DESIRED_URL" --> \
+        <input type="text" id="message" placeholder="Optional Message"> \
+        <button id="msgAllFriends" type="button"><h4>Message All Friends</h4></button> \
         <button id="showRemover" type="button"><h4>Show One-Click Delete Friend</h4></button> <!--not gonna worry about hiding these buttons, the page can just be refreshed--> \
         <button id="removeAllChecked" type="button"><h4>Remove All Checked</h4></button> \
         <button id="denyAll" type="button"><h4>Deny All Friend Requests</h4></button> \
@@ -281,6 +283,19 @@ $("#messageAll").click ( function () {
     messageFromListClickDots(players);
 } );
 
+$("#msgAllFriends").click ( function () {
+    var players = new Array();
+    var okgo = 0;
+    $("i[class='scicon-menu-dots player-card-actions']").each(function() {
+        players.push($(this));
+    });
+    if (players.length != $("div[class='inner clearfix']").children().first().children().first().html().replace(/[{()}]/g, '')) //http://i.imgur.com/TQeGpzd.png
+    {
+        $("#infoText").text ("Detected " + players.length + " friends, but you have " + $("div[class='inner clearfix']").children().first().children().first().html().replace(/[{()}]/g, '') + " friends. Please scroll down all the way before beginning messaging");
+    }
+    messageFromListClickDots(players);
+} );
+
 $("#removeAllChecked").click ( function () {
     var checkmarkList = new Array();
     $("[id^=friendBox]").each(function() {
@@ -525,22 +540,22 @@ $("#listByRank").click ( function () {
     //Skip sorting to keep alhpabetical
 
     $("header").append ( '<div id="PlayerList" style="text-align:center"> ');
-    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 1 <input id="selectAll" type="checkbox" value="Rank 1"></h1><br/ id="playerDate">'); //Rank 1 + the checkmark for selecting all
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 1</h1><h4 id="playerDate" style="color:white;text-align:center">Select all in this rank: <input id="selectAll" type="checkbox" value="Rank 1"></h4><h4 id="playerDate" style="color:white;text-align:center">Select all with different active crew: <input id="selectDifferentAll" type="checkbox" value="Rank 1"></h4><br/ id="playerDate">'); //Rank 1 + the checkmark for selecting all
     for (var i = 0; i < rank1.length; i++)
 	{
         $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank1[i].name + '" type="checkbox" value="' + rank1[i].name + '">' + rank1[i].name + '</h5>'); //player name + checkbox
 	}
-    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 2 <input id="selectAll" type="checkbox" value="Rank 2"></h1><br/ id="playerDate">');
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 2</h1><h4 id="playerDate" style="color:white;text-align:center">Select all in this rank: <input id="selectAll" type="checkbox" value="Rank 2"></h4><h4 id="playerDate" style="color:white;text-align:center">Select all with different active crew: <input id="selectDifferentAll" type="checkbox" value="Rank 2"></h4><br/ id="playerDate">');
     for (var i = 0; i < rank2.length; i++)
 	{
         $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank2[i].name + '" type="checkbox" value="' + rank2[i].name + '">' + rank2[i].name + '</h5>');
 	}
-    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 3 <input id="selectAll" type="checkbox" value="Rank 3"></h1><br/ id="playerDate">');
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 3</h1><h4 id="playerDate" style="color:white;text-align:center">Select all in this rank: <input id="selectAll" type="checkbox" value="Rank 3"></h4><h4 id="playerDate" style="color:white;text-align:center">Select all with different active crew: <input id="selectDifferentAll" type="checkbox" value="Rank 3"></h4><br/ id="playerDate">');
     for (var i = 0; i < rank3.length; i++)
 	{
         $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank3[i].name + '" type="checkbox" value="' + rank3[i].name + '">' + rank3[i].name + '</h5>');
 	}
-    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 4 <input id="selectAll" type="checkbox" value="Rank 4"></h1><br/ id="playerDate">');
+    $("header").append ( '<hr/ id="playerDate"><h1 id="playerDate" style="color:white;text-align:center">Rank 4</h1><h4 id="playerDate" style="color:white;text-align:center">Select all in this rank: <input id="selectAll" type="checkbox" value="Rank 4"></h4><h4 id="playerDate" style="color:white;text-align:center">Select all with different active crew: <input id="selectDifferentAll" type="checkbox" value="Rank 4"></h4><br/ id="playerDate">');
     for (var i = 0; i < rank4.length; i++)
 	{
         $("header").append ( '<h5 id="playerDate" style="color:white;text-align:center"><input id="listBox' + rank4[i].name + '" type="checkbox" value="' + rank4[i].name + '">' + rank4[i].name + '</h5>');
@@ -570,6 +585,30 @@ $("#listByRank").click ( function () {
                 toggleCheckMark($(this).attr("data-nickname"), "unchecked");
             });
             $("#infoText").text ("All of " + this.value + " has been unchecked.");
+        }
+    });
+
+    $("[id^=selectDifferentAll]").click ( function () {  //the checkboxes for selecting all players in a rank
+
+       var rankToUse = this.value.replace('Rank ',''); //convert the value to just the number
+       var crewName =  $("#hierarchyFilterWrapper div[class='crewTag private']").children().first().html();
+
+        if ( this.checked ) {
+            $("#crewRankWrapper_"+rankToUse+" a[class='player-card-actions']").each(function() { //go through each player and checkem
+                if (crewName != $(this).parent().next().children().first().children().first().html())
+                {
+                    toggleCheckMark($(this).attr("data-nickname"), "check");
+                }
+            });
+            $("#infoText").text ("All of " + this.value + " with a different active crew has been checkmarked. Use the normal SocialClub Kick/Ban/Promote/Demote options.");
+        } else {
+            $("#crewRankWrapper_"+rankToUse+" a[class='player-card-actions']").each(function() {
+                if (crewName != $(this).parent().next().children().first().children().first().html())
+                {
+                    toggleCheckMark($(this).attr("data-nickname"), "unchecked");
+                }
+            });
+            $("#infoText").text ("All of " + this.value + " with a different active crew has been unchecked.");
         }
     });
 

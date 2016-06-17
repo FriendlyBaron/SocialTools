@@ -1,12 +1,11 @@
 # SocialTools
 A Greasemonkey/Tampermonkey script that adds some extra function to Rockstar's Social Club Crew Management Page.
 
+Disucssion on NODO forums - http://nodo.freeforums.net/thread/6801/socialtools-extension-social-club-website
+
 View info/use on reddit: https://www.reddit.com/r/GrandTheftAutoV/comments/479o5s/socialtools_a_browser_script_for_enhancements_to/
 
 https://www.reddit.com/r/gtaonline/comments/49uz5h/socialtools_a_browser_script_for_enhancements_to/
-
-Disucssion on NODO forums - http://nodo.freeforums.net/thread/6801/socialtools-extension-social-club-website
-
 ____________________________________________________________________
 
 Managing players in a crew can be hard. Clicking through multiple pages on Rockstar's Social Club page to find them for kicks, bans, promotions or demotions takes an annoyingly long time. **SocialTools** aims to simplify this process for crews both large and small.
@@ -24,7 +23,6 @@ Features:
 * Manage people in the crew from their profile page - http://i.imgur.com/gWSgqBP.png
 * Quickly Reject One or All Friend Requests
 
-
 Install:
 
 * First install [Greasemonkey](https://addons.mozilla.org/en-us/firefox/addon/greasemonkey/) (Firefox) or [Tampermonkey](https://chrome.google.com/webstore/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo) (Chrome)
@@ -36,6 +34,7 @@ Usage:
 * The *Open Player Popup* will open the player-sheet for the player whose name is typed in.
 * *List All with Different Active Crew* will list players with an active crew different than the current crew.
 * *List All By Rank Button* will show all members by rank then by alphabet. Clicking the checkbox next to the Rank Name will select all of that rank. This action will take a few seconds when there are many players in a rank.
+* You can also select all members of a rank with a different active crew from here: http://i.imgur.com/ws4zjrn.png
 * In the date and rank lists, hitting the individual checkbox will toggle the checkmark on that player.
 * The *Hide Player List* button will hide the previous two lists after they have been generated.
 * *Hide SocialTools* will hide the secondary buttons from your the page until the page is reloaded.
@@ -44,6 +43,7 @@ Usage:
 * Also on the Friend page, you can checkmark multiple people - http://i.imgur.com/WzBAQVj.png - and then all of them will be removed at once by clicking *Remove All Checked*
 * You can also deny a single or deny all friend requests at once.
 * Individual profile pages will show a remove friend button, even if private. http://i.imgur.com/YXZHFNw.png and http://i.imgur.com/kRE9Rpn.png
+* Message all friends. Includes a safe-guard to make sure all friends are loaded in http://i.imgur.com/TQeGpzd.png
 * Also on individual profile pages, you have the option to 'Manage for this crew' - Basically, pick the crew you want to manage them in (and have permission to), and it will load that crew's manage page and search for the player automatically.
 
 Security:
