@@ -38,13 +38,14 @@ Usage:
 * In the date and rank lists, hitting the individual checkbox will toggle the checkmark on that player.
 * The *Hide Player List* button will hide the previous two lists after they have been generated.
 * *Hide SocialTools* will hide the secondary buttons from your the page until the page is reloaded.
-* The *Message All Checked* Button will send the message entered in the 'Optional Message' Area to everyone who has been checkmarked. It takes around 15 seconds per message, but you can message as many people as you want at once.
+* The *Message All Checked* Button will send the message entered in the 'Optional Message' Area to everyone who has been checkmarked. It takes around 15 seconds per message, but you can message as many people as you want at once. After 100 messages it will stop and give a 'continue name' that you enter into the "Enter Name" box upon page refresh.
 * On your Friend's page, the *Show Delete Friend* button will add a *Delete Friend* button onto each player card. This button will instantly remove them as a friend. The *Show Delete Friend* button is a safety tool, as the *Delete Friend* button automatically confirms the deletion.
 * Also on the Friend page, you can checkmark multiple people - http://i.imgur.com/WzBAQVj.png - and then all of them will be removed at once by clicking *Remove All Checked*
 * You can also deny a single or deny all friend requests at once.
 * Individual profile pages will show a remove friend button, even if private. http://i.imgur.com/YXZHFNw.png and http://i.imgur.com/kRE9Rpn.png
 * Message all friends. Includes a safe-guard to make sure all friends are loaded in http://i.imgur.com/TQeGpzd.png
 * Also on individual profile pages, you have the option to 'Manage for this crew' - Basically, pick the crew you want to manage them in (and have permission to), and it will load that crew's manage page and search for the player automatically.
+* Code for selecting players not on (or on) a list are in the code but not enabled by default. Use notepad++ find/replace macros to easily create your list. You will need to edit the code to make this work, you can contact me if you need help.
 
 Security:
 
