@@ -90,7 +90,7 @@ function checkQueryPlayer(name)
     $("a[id='searchHierarchy']").click();
     if ($("label[for='check_" + name + "']").length)
     {
-        if ($("label[for='check_" + name + "']").parent().attr("title") == "Unselect")
+        if ($("label[for='check_" + name + "']").parent().attr("title") == "Deselect")
         {
             setTimeout(checkQueryPlayer, 1000, name);
         }
@@ -277,10 +277,66 @@ $("#banButton").click ( function () {
 
 $("#messageAll").click ( function () {
     var players = new Array();
-    $("div[title='Unselect']").each(function() {
-        players.push($(this).next());
+    var enabled = false;
+    var finalPlayer = "";
+    var count = 0;
+
+    /*
+    //-----
+    //http://stackoverflow.com/questions/11003761/notepad-add-to-every-line
+    var registered = [
+        "EDDI2142",
+        "Ganjalo",
+        "TheTerminat0r"
+    ];
+    */
+    //-----
+
+    $("div[title='Deselect']").each(function() {
+        //players.push($(this).next());
+
+        //-----ADVANCED - UNCOMMENT THIS BLOCK AND THE "registered" LIST - ONLY PEOPLE NOT ON THE LIST WILL BE MESSAGED-----
+        /*
+        var isRegistered=false;
+
+        for(var i=0;i<registered.length;i++) {
+            if($(this).next().attr("data-nickname")==registered[i])
+            {
+                isRegistered=true;
+            }
+        }
+
+        if(!isRegistered)
+        {
+            //players.push($(this).next());
+            $(this).next().css( "border", "3px solid red" );
+        }
+        */
+        //-----END ADVANCED-----
+
+        //-----NORMAL SECTION-----
+        if (count < 101 && ((document.getElementById("name").value === "" && !enabled) || (document.getElementById("name").value !== "Enter Name" && $(this).next().attr("data-nickname") === document.getElementById("name").value && !enabled))) //this section is for resuming messaging, if less than NAME then it doesn't include them
+        {
+            enabled = true;
+            players.push($(this).next());
+            count++;
+        }
+        else if (enabled)
+        {
+            if (count < 100)
+            {
+                players.push($(this).next());
+            }
+            else
+            {
+                enabled = false;
+                finalPlayer = $(this).next().attr("data-nickname");
+            }
+            count++;
+        }
+        //-----END NORMAL SECTION-----
     });
-    messageFromListClickDots(players);
+    messageFromListClickDots(players, finalPlayer);
 } );
 
 $("#msgAllFriends").click ( function () {
@@ -293,7 +349,7 @@ $("#msgAllFriends").click ( function () {
     {
         $("#infoText").text ("Detected " + players.length + " friends, but you have " + $("div[class='inner clearfix']").children().first().children().first().html().replace(/[{()}]/g, '') + " friends. Please scroll down all the way before beginning messaging");
     }
-    messageFromListClickDots(players);
+    messageFromListClickDots(players, "");
 } );
 
 $("#removeAllChecked").click ( function () {
@@ -381,11 +437,11 @@ function removeListOfFriendsConfirm(checkmarkList) {
     setTimeout(removeListOfFriends, 11000, checkmarkList);
 }
 
-function messageFromListClickDots(players) {
+function messageFromListClickDots(players, finalPlayer) {
 
     if (players.length < 1)
     {
-        $("#infoText").text ("Done with mass messaging.");
+        $("#infoText").text ("Done with mass messaging. Enter " + finalPlayer + " to continue where you left off");
         return;
     }
     else
@@ -397,7 +453,7 @@ function messageFromListClickDots(players) {
     if (!(messageStr === "Optional Message") && !(messageStr === ""))
     {
         players[0].click();
-        setTimeout(messageFromListClickMessage, 5000, players);
+        setTimeout(messageFromListClickMessage, 5000, players, finalPlayer);
     }
     else
     {
@@ -406,23 +462,23 @@ function messageFromListClickDots(players) {
     }
 }
 
-function messageFromListClickMessage(players) {
+function messageFromListClickMessage(players, finalPlayer) {
 
     $("a[title='Message']").click(); //message button
-    setTimeout(messageFromListWriteMessage, 5000, players);
+    setTimeout(messageFromListWriteMessage, 5000, players, finalPlayer);
 }
 
-function messageFromListWriteMessage(players) {
+function messageFromListWriteMessage(players, finalPlayer) {
 
     $("textarea[name='newMessageTextarea']").text(document.getElementById("message").value); //set message text
-    setTimeout(messageFromListClickSendMessage, 500, players);
+    setTimeout(messageFromListClickSendMessage, 1000, players, finalPlayer);
 }
 
-function messageFromListClickSendMessage(players) {
+function messageFromListClickSendMessage(players, finalPlayer) {
 
     $("button[id='btnSend']").click(); //send
     players.shift();
-    setTimeout(messageFromListClickDots, 5000, players);
+    setTimeout(messageFromListClickDots, 5000, players, finalPlayer);
 }
 
 function addDeleteButtons(){
@@ -577,7 +633,33 @@ $("#listByRank").click ( function () {
 
         if ( this.checked ) {
             $("#crewRankWrapper_"+rankToUse+" a[class='player-card-actions']").each(function() { //go through each player and checkem
+
+                //-----ADVANCED - UNCOMMENT THIS BLOCK AND COMMENT NORMAL BLOCK TO SELECT PLAYERS *NOT* ON THE "registered" LIST-----
+                /*var registered = [
+                    "name1",
+                    "name2",
+                    "name3"
+                ];
+
+                var isRegistered=false;
+
+                for(var i=0;i<registered.length;i++) {
+                    if($(this).attr("data-nickname").toUpperCase()==registered[i].toUpperCase())
+                    {
+                        isRegistered=true;
+                    }
+                }
+
+                if(!isRegistered)
+                {
+                    toggleCheckMark($(this).attr("data-nickname"), "check");
+                }
+                */
+                //-----END ADVANCED-----
+
+                //-----NORMAL-----
                 toggleCheckMark($(this).attr("data-nickname"), "check");
+                //-----END NORMAL-----
             });
             $("#infoText").text ("All of " + this.value + " has been checkmarked. Use the normal SocialClub Kick/Ban/Promote/Demote options.");
         } else {
@@ -595,6 +677,7 @@ $("#listByRank").click ( function () {
 
         if ( this.checked ) {
             $("#crewRankWrapper_"+rankToUse+" a[class='player-card-actions']").each(function() { //go through each player and checkem
+                $(this).parent().next().children().first().children().first().css( "border", "3px solid red" );
                 if (crewName != $(this).parent().next().children().first().children().first().html())
                 {
                     toggleCheckMark($(this).attr("data-nickname"), "check");
