@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SocialTools
 // @namespace    https://github.com/FriendlyBaron/SocialTools
-// @version      1.3
+// @version      1.4
 // @description  SocialTools
 // @author       FriendlyBaron
 // @match        https://socialclub.rockstargames.com/crew/*/manage/hierarchy
@@ -495,11 +495,11 @@ function addDeleteButtons(){
 
         if ($(this).find(".removeFriendClass").length < 1) //dont do anything if the player card already has the Delete Friend button
         {
-            $(this).append('<br/><button id="removeFriend'+($(this).attr("data-nickname")).replace(/./g, "-")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>    ');
+            $(this).append('<br/><button id="removeFriend'+($(this).attr("data-nickname")).replace(/\./g, "-")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>    ');
 
             $(this).parent().children().first().next().children().first().next().after('<input id="friendBox' + $(this).attr("data-nickname") + '" type="checkbox" value="' + $(this).attr("data-nickname") + '">');
 
-            $("[id=removeFriend"+($(this).attr("data-nickname")).replace(/./g, "-")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
+            $("[id=removeFriend"+($(this).attr("data-nickname")).replace(/\./g, "-")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
 
                 $(this).parent().children().first().next().next().click();
                 setTimeout(unfriendMore, 1000);
@@ -509,11 +509,11 @@ function addDeleteButtons(){
     $("div[class='scicon-menu-dots player-card-actions']").each(function() {
         if ($(this).find(".denyFriendClass").length < 1) //dont do anything if the player card already has the Deny Friend button
         {
-            $(this).append('<br/><button id="denyFriend'+($(this).attr("data-nickname")).replace(/./g, "-")+'" type="button" class="denyFriendClass"><h6>Deny Friend</h6></button>    ');
+            $(this).append('<br/><button id="denyFriend'+($(this).attr("data-nickname")).replace(/\./g, "-")+'" type="button" class="denyFriendClass"><h6>Deny Friend</h6></button>    ');
 
             $(this).parent().children().first().next().children().first().next().after('<input id="denyBox' + $(this).attr("data-nickname") + '" type="checkbox" value="' + $(this).attr("data-nickname") + '">');
 
-            $("[id=denyFriend"+($(this).attr("data-nickname")).replace(/./g, "-")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
+            $("[id=denyFriend"+($(this).attr("data-nickname")).replace(/\./g, "-")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
 
                 //$(this).parent().children().first().next().css( "border", "3px solid red" );
                 //$(this).parent().children().first().next().next().click();
