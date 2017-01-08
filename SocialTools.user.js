@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         SocialTools
 // @namespace    https://github.com/FriendlyBaron/SocialTools
-// @version      1.2
+// @version      1.3
 // @description  SocialTools
 // @author       FriendlyBaron
 // @match        https://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/crew/*/manage/hierarchy
 // @match        http://socialclub.rockstargames.com/friends/index
 // @match        https://socialclub.rockstargames.com/friends/index
+// @match        http://socialclub.rockstargames.com/friends
+// @match        https://socialclub.rockstargames.com/friends
 // @match        https://socialclub.rockstargames.com/member/*
 // @match        http://socialclub.rockstargames.com/member/*
 // @grant        none
@@ -24,7 +26,8 @@
 //The base Jquery to form the dialog comes from here: http://stackoverflow.com/questions/11668111/how-do-i-pop-up-a-custom-form-dialog-in-a-greasemonkey-script
 //--- Use jQuery to add the form in a "popup" dialog.
 
-if (window.location.href == "http://socialclub.rockstargames.com/friends/index" || window.location.href == "https://socialclub.rockstargames.com/friends/index") //If there is a better way to do this, let me know...
+if (window.location.href == "http://socialclub.rockstargames.com/friends/index" || window.location.href == "https://socialclub.rockstargames.com/friends/index"
+   || window.location.href == "https://socialclub.rockstargames.com/friends" || window.location.href == "https://socialclub.rockstargames.com/friends")
 {
     $("header").append ( ' \
     <div id="PopupContainer" style="text-align:center"> \
@@ -61,6 +64,11 @@ $("header").append ( ' \
         <button id="listByRank" type="button"><h4>List All by Rank</h4></button> \
         <button id="CloseListBtn" style="text-align:center" type="button"><h4>Hide Player List</h4></button> \
         <button id="CloseDlgBtn" type="button"><h4>Hide SocialTools</h4></button> \
+        <br/> \
+        <br/> \
+        <button id="denyAllJoin" type="button"><h4>Deny All Join Requests</h4></button> \
+        <button id="denyAllJoinSpareXbox" type="button"><h4>Deny All Join Requests without a linked Xbox Account</h4></button> \
+        <button id="denyAllJoinSparePSN" type="button"><h4>Deny All Join Requests without a linked PSN Account</h4></button> \
     </form> \
     </div> \
 ' );
@@ -87,7 +95,7 @@ function setQueryPlayer()
 
 function checkQueryPlayer(name)
 {
-    $("a[id='searchHierarchy']").click();
+    $("a[id='searchHierarchy']")[0].click();
     if ($("label[for='check_" + name + "']").length)
     {
         if ($("label[for='check_" + name + "']").parent().attr("title") == "Deselect")
@@ -111,19 +119,19 @@ function sendMessage(nameStr, messageStr, kickOrBan) {
 
 function unfriendMore() {
 
-    $("a[title='More Options']").click();
+    $("a[title='More Options']")[0].click();
     setTimeout(unfriendUnfriend, 500);
 }
 
 function unfriendUnfriend() {
 
-    $("a[title='Unfriend']").click();
+    $("a[title='Unfriend']")[0].click();
     setTimeout(unfriendConfirm, 1000);
 }
 
 function unfriendConfirm()
 {
-   $("a:contains('confirm')").click();
+   $("a:contains('confirm')")[0].click();
    setTimeout(wipeBlack, 1000);
 }
 
@@ -139,13 +147,12 @@ function showDeleteFriendOption() {
     $("div[class='split-button end btnDeleteFriend'").append ( ' \
             <button id="removeFriendHiddenProfile" type="button">One Click Delete Friend</button> \
     ' );
+
     $("#removeFriendNormal").click ( function () {
-        $("li[id='btnDeleteFriend']").click();
-        setTimeout(confirmRemoveFriend, 750);
+        setTimeout(confirmRemoveFriend, 2000);
     } );
     $("#removeFriendHiddenProfile").click ( function () {
-        $("div[class='split-button end btnDeleteFriend'").click();
-        setTimeout(confirmRemoveFriend, 750);
+        setTimeout(confirmRemoveFriend, 2000);
     } );
 
     setTimeout(showManageOption, 500);
@@ -341,7 +348,6 @@ $("#messageAll").click ( function () {
 
 $("#msgAllFriends").click ( function () {
     var players = new Array();
-    var okgo = 0;
     $("i[class='scicon-menu-dots player-card-actions']").each(function() {
         players.push($(this));
     });
@@ -373,8 +379,10 @@ $("#denyAll").click ( function () {
 
 
 function confirmRemoveFriend() {
-    $("a[id='btnConfirm']").click();
+
+    $("a[id='btnConfirm']")[0].click();
 }
+
 
 function denyRequests(denyList) {
     if (denyList.length < 1)
@@ -392,7 +400,7 @@ function denyRequests(denyList) {
 
 function denyRequestReject(denyList) {
 
-    $("a[class='btnRejectFriend rejectRequest']").click();
+    $("a[class='btnRejectFriend rejectRequest']")[0].click();
     denyList.shift();
     setTimeout(denyRequests, 11500, denyList);
 }
@@ -420,19 +428,19 @@ function removeListOfFriends(checkmarkList) {
 
 function removeListOfFriendsMore(checkmarkList) {
 
-    $("a[title='More Options']").click();
+    $("a[title='More Options']")[0].click();
     setTimeout(removeListOfFriendsDeleteBtn, 2000, checkmarkList);
 }
 
 function removeListOfFriendsDeleteBtn(checkmarkList) {
 
-    $("a[title='Unfriend']").click();
+    $("a[title='Unfriend']")[0].click();
     setTimeout(removeListOfFriendsConfirm, 2000, checkmarkList);
 }
 
 function removeListOfFriendsConfirm(checkmarkList) {
 
-    $("a[id='btnConfirm']").click();
+    $("a[id='btnConfirm']")[0].click();
     checkmarkList.shift();
     setTimeout(removeListOfFriends, 11000, checkmarkList);
 }
@@ -464,7 +472,7 @@ function messageFromListClickDots(players, finalPlayer) {
 
 function messageFromListClickMessage(players, finalPlayer) {
 
-    $("a[title='Message']").click(); //message button
+    $("a[title='Message']")[0].click(); //message button
     setTimeout(messageFromListWriteMessage, 5000, players, finalPlayer);
 }
 
@@ -487,11 +495,11 @@ function addDeleteButtons(){
 
         if ($(this).find(".removeFriendClass").length < 1) //dont do anything if the player card already has the Delete Friend button
         {
-            $(this).append('<br/><button id="removeFriend'+$(this).attr("data-nickname")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>    ');
+            $(this).append('<br/><button id="removeFriend'+($(this).attr("data-nickname")).replace(/./g, "-")+'" type="button" class="removeFriendClass"><h6>Delete Friend</h6></button>    ');
 
             $(this).parent().children().first().next().children().first().next().after('<input id="friendBox' + $(this).attr("data-nickname") + '" type="checkbox" value="' + $(this).attr("data-nickname") + '">');
 
-            $("[id=removeFriend"+$(this).attr("data-nickname")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
+            $("[id=removeFriend"+($(this).attr("data-nickname")).replace(/./g, "-")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
 
                 $(this).parent().children().first().next().next().click();
                 setTimeout(unfriendMore, 1000);
@@ -501,11 +509,11 @@ function addDeleteButtons(){
     $("div[class='scicon-menu-dots player-card-actions']").each(function() {
         if ($(this).find(".denyFriendClass").length < 1) //dont do anything if the player card already has the Deny Friend button
         {
-            $(this).append('<br/><button id="denyFriend'+$(this).attr("data-nickname")+'" type="button" class="denyFriendClass"><h6>Deny Friend</h6></button>    ');
+            $(this).append('<br/><button id="denyFriend'+($(this).attr("data-nickname")).replace(/./g, "-")+'" type="button" class="denyFriendClass"><h6>Deny Friend</h6></button>    ');
 
             $(this).parent().children().first().next().children().first().next().after('<input id="denyBox' + $(this).attr("data-nickname") + '" type="checkbox" value="' + $(this).attr("data-nickname") + '">');
 
-            $("[id=denyFriend"+$(this).attr("data-nickname")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
+            $("[id=denyFriend"+($(this).attr("data-nickname")).replace(/./g, "-")+"]").click ( function () {  //we have to create a button handler for each button directly since we're not adding them all at once.
 
                 //$(this).parent().children().first().next().css( "border", "3px solid red" );
                 //$(this).parent().children().first().next().next().click();
@@ -573,7 +581,95 @@ $("#listByActive").click ( function () {
     });
 } );
 
+$("#denyAllJoin").click ( function () {
 
+    var rank5 = new Array();
+
+    $("#crewRankWrapper_5 i[class='scicon-menu-dots player-card-actions']").each(function() {
+
+        rank5.push($(this).attr("data-nickname"));
+    });
+
+    setTimeout(denyCrewJoinBegin, 1000, rank5, "No linked type specified");
+} );
+
+$("#denyAllJoinSparePSN").click ( function () {
+
+    var rank5 = new Array();
+
+    $("#crewRankWrapper_5 i[class='scicon-menu-dots player-card-actions']").each(function() {
+
+        rank5.push($(this).attr("data-nickname"));
+    });
+
+    setTimeout(denyCrewJoinBegin, 1000, rank5, "PSN", 0);
+} );
+
+$("#denyAllJoinSpareXbox").click ( function () {
+
+    var rank5 = new Array();
+
+    $("#crewRankWrapper_5 i[class='scicon-menu-dots player-card-actions']").each(function() {
+
+        rank5.push($(this).attr("data-nickname"));
+    });
+
+    setTimeout(denyCrewJoinBegin, 1000, rank5, "XBOX", 0);
+} );
+
+
+function denyCrewJoinBegin(listToDeny, flag, count) {
+
+    if (listToDeny.length < 1)
+    {
+        $("#infoText").text ("Denied/Accepted all crew join requests.");
+        return;
+    }
+    else if (count > 99)
+    {
+        $("#infoText").text ("Denied/Accepted 100 requests (Rockstar limit), refresh the page and reselect.");
+        return;
+    }
+    else
+    {
+        $("#infoText").text ("" + listToDeny.length + " left to deny if they do not have a linked account: " + flag);
+    }
+
+    count++;
+
+    $("i[data-nickname='"+listToDeny[0]+"'").click();
+    setTimeout(denyCrewJoinCheckAcceptReject, 5000, listToDeny, flag, count);
+}
+
+function denyCrewJoinCheckAcceptReject(listToDeny, flag, count) {
+
+    if($("a[title='Reject Crew Request']").length)
+    {
+        if($(".accounts " + flag).length)
+        {
+            $("a[title='Invite to Crew']")[0].click();
+            setTimeout(denyCrewJoinCancel, 5000, listToDeny, flag, count);
+        }
+        else
+        {
+            $("a[title='Reject Crew Request']")[0].click();
+            setTimeout(denyCrewJoinCancel, 5000, listToDeny, flag, count);
+        }
+    }
+    else
+    {
+        $("#infoText").text ("Could not open profile for " + listToDeny[0] + ", it is probably private");
+        listToDeny.shift();
+        setTimeout(denyCrewJoinBegin, 5000, listToDeny, flag, count);
+    }
+}
+
+function denyCrewJoinCancel(listToDeny, flag, count) {
+
+    $("a[title='Cancel']")[0].click();
+    listToDeny.shift();
+    setTimeout(denyCrewJoinBegin, 5500, listToDeny, flag, count);
+}
 
 $("#listByRank").click ( function () {
     var rank1 = new Array();

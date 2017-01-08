@@ -22,6 +22,7 @@ Features:
 * Send a mass message to multiple people in the crew
 * Manage people in the crew from their profile page - http://i.imgur.com/gWSgqBP.png
 * Quickly Reject One or All Friend Requests
+* Reject all requests to join a crew, based off of linked accounts
 
 Install:
 
@@ -46,6 +47,7 @@ Usage:
 * Message all friends. Includes a safe-guard to make sure all friends are loaded in http://i.imgur.com/TQeGpzd.png
 * Also on individual profile pages, you have the option to 'Manage for this crew' - Basically, pick the crew you want to manage them in (and have permission to), and it will load that crew's manage page and search for the player automatically.
 * Code for selecting players not on (or on) a list are in the code but not enabled by default. Use notepad++ find/replace macros to easily create your list. You will need to edit the code to make this work, you can contact me if you need help.
+* You can deny all requests to join a private crew, or decline them based on Xbox or PSN Linked Accounts. I can add other linked account types upon request. http://i.imgur.com/MhURc2o.png
 
 Security:
 
